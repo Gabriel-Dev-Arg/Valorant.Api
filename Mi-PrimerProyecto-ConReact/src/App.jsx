@@ -13,7 +13,7 @@ function App() {
   }
 
   return (
-    <div className="has-background-warning-10 min-h-screen flex flex-col">
+    <div className="has-background-link-10 min-h-screen flex flex-col">
       <div className='flex flex-col pt-20 px-4'>
         <Header buscador={buscador} handleChange={handleChange}/>
       </div>

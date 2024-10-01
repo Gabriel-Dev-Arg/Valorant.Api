@@ -7,7 +7,7 @@ function Buscador({ buscador, handleChange }) {
             <input 
                 type="text" 
                 placeholder="Buscar" 
-                className="block appearance-none w-full bg-blue-800 border border-blue-700 text-blue-200 py-3 px-4 pr-10 rounded-lg leading-tight focus:outline-none focus:bg-blue-700 focus:border-blue-500 transition duration-300"
+                className="block appearance-none w-full has-background-text-10 border border-red-800 text-blue-200 py-3 px-4 pr-10 rounded-lg leading-tight focus:outline-none focus:bg-red-950 focus:border-red-500 transition duration-300"
                 value={buscador} 
                 onChange={(event) => handleChange(event.target.value)}
             />
