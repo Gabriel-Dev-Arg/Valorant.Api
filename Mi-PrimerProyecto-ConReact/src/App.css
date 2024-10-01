@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+components{
+    btn-primary{
+        @apply bg-indigo-950 text-white p-4 rounded-lg;
+    }
+}
