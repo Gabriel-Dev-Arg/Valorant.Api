@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import "./App.css";
-import Pagination from './pages/pagination.jsx';
+import Pagination from './pagination.jsx';
 import Buscador from './buscador.jsx';
 
 const urlApi = "https://valorant-api.com/v1/agents?isPlayable=true";

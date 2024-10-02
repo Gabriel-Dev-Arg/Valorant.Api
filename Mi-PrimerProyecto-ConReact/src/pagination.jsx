@@ -1,5 +1,5 @@
 import React from "react";
-import "../App.css";
+import "./App.css";
 
 function Pagination({ paginacion, currentPage, total, setCurrentPage }) {
     const pageNumbers = [];
