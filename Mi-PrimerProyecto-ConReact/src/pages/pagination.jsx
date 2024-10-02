@@ -1,14 +1,16 @@
+import React from "react";
 import "../App.css";
 
-function Pagination({paginacion,currentPage,total,setCurrentPage}) {
+function Pagination({ paginacion, currentPage, total, setCurrentPage }) {
     const pageNumbers = [];
-    console.log(Math.ceil(total/paginacion))
-    for(let i=1;i<=Math.ceil(total/paginacion);i++){
+    for (let i = 1; i <= Math.ceil(total / paginacion); i++) {
         pageNumbers.push(i);
     }
-    function handlePageClick(pageNumber){
+
+    const handlePageClick = (pageNumber) => {
         setCurrentPage(pageNumber);
-    }
+    };
+
     const onPreviousClick = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
@@ -20,21 +22,48 @@ function Pagination({paginacion,currentPage,total,setCurrentPage}) {
             setCurrentPage(currentPage + 1);
         }
     };
-    return( 
-    <nav className="pagination is-centered mb-6" role="navigation" aria-label="pagination">
-  <a href="#" className={`pagination-previous ${currentPage === 1 ? "is-disabled" : ""}`} onClick={onPreviousClick}>Previous</a>
-  <a href="#" className={`pagination-next ${currentPage >= pageNumbers.length ? "is-disabled" : ""}`} onClick={onNextClick}>Next page</a>
-  <ul className="pagination-list">
-    {
-        pageNumbers.map(noPage =>(
-            <li key={noPage}>
-                <a href="#" className={currentPage === noPage ? "pagination-link is-current" : "pagination-link"} aria-current="page" onClick={()=>handlePageClick(noPage)}>
-                {noPage}   </a>
-                    </li>
-        ))
-     }
-  </ul>
-</nav>
-    )
+
+    return (
+        <nav className="flex justify-center items-between space-x-2 my-8" role="navigation" aria-label="pagination">
+            <button
+                onClick={onPreviousClick}
+                disabled={currentPage === 1}
+                className={`px-4 py-2 rounded-md ${
+                    currentPage === 1
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-red-600 text-white hover:bg-red-700'
+                } transition duration-300 ease-in-out`}
+            >
+                Previous
+            </button>
+            <div className="flex space-x-1">
+                {pageNumbers.map((noPage) => (
+                    <button
+                        key={noPage}
+                        onClick={() => handlePageClick(noPage)}
+                        className={`w-10 h-10 flex items-center justify-center rounded-md ${
+                            currentPage === noPage
+                                ? 'bg-red-600 text-white'
+                                : 'bg-gray-200 text-gray-700 hover:bg-red-200'
+                        } transition duration-300 ease-in-out`}
+                    >
+                        {noPage}
+                    </button>
+                ))}
+            </div>
+            <button
+                onClick={onNextClick}
+                disabled={currentPage >= pageNumbers.length}
+                className={`px-4 py-2 rounded-md ${
+                    currentPage >= pageNumbers.length
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-red-600 text-white hover:bg-red-700'
+                } transition duration-300 ease-in-out`}
+            >
+                Next
+            </button>
+        </nav>
+    );
 }
-export default Pagination
+
+export default Pagination;

@@ -30,7 +30,10 @@ function ApiValorant() {
     const [agents, setAgents] = useState([]);
     const [buscador, setBuscador] = useState('');
     const [rolSeleccionado, setRolSeleccionado] = useState('');
-    const [agentesSeleccionados, setAgentesSeleccionados] = useState([]);
+    const [agentesSeleccionados, setAgentesSeleccionados] = useState(() => {
+        const saved = localStorage.getItem("agentesSeleccionados");
+        return saved ? JSON.parse(saved) : [];
+    });
     const [modalOpen, setModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [paginacion, setPaginacion] = useState(6);
@@ -50,9 +53,14 @@ function ApiValorant() {
                 console.error('Error fetching data:', error);
                 setLoading(false);
             });
+            
     }, []);
+    useEffect(() => {
+        localStorage.setItem("agentesSeleccionados", JSON.stringify(agentesSeleccionados));
+    }, [agentesSeleccionados]);
     const handleBuscadorChange = (newValue) => {
         setBuscador(newValue);
+    
     };
 
     const filtrarAgentes = (agentes) => {
@@ -95,97 +103,104 @@ function ApiValorant() {
 
     return (
         <div className="container mx-auto px-4">
-        <div className="mb-8 mt-4">
-    <div className="flex justify-between items-center space-x-4">
-        <div className="flex-grow max-w-[70%]"> {/* Ajusta el max-w según necesites */}
-            <div className="relative">
-                <select
-                    id="role-select"
-                    value={rolSeleccionado}
-                    onChange={(e) => setRolSeleccionado(e.target.value)}
-                    className="block appearance-none w-full has-background-text-00 border border-red-700 text-white py-3 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-red-700 focus:border-red-500 transition duration-300"
-                >
-                    <option value="">Todos los roles</option>
-                    {roles.map(rol => (
-                        <option key={rol} value={rol}>{rol}</option>
-                    ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-blue-200">
-                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                    </svg>
-                </div>
-            </div>
-        </div>
-        <div className="flex-grow-0"> {/* Esto mantendrá el Buscador a la derecha */}
-            <Buscador buscador={buscador} handleChange={handleBuscadorChange}/>
-        </div>
-    </div>
-    {showWarning && (
-                <div className="fixed right-4 bottom-10 w-72 notification is-warning shadow-lg rounded-lg overflow-hidden h-40 transition-all  ease-in-out z-50">
-                    <button className="delete absolute top-2 right-2" onClick={closeWarning}></button>
-                    <div className="p-1">
-                        <p className="font-bold mb-2">Límite alcanzado</p>
-                        <p className="text-xl">Has seleccionado 5 agentes. No puedes añadir más a tu equipo.</p>
+            <div className="mb-8 mt-4">
+                <div className="flex justify-between items-center space-x-4">
+                    <div className="flex-grow max-w-[70%]"> {/* Ajusta el max-w según necesites */}
+                        <div className="relative">
+                            <select
+                                id="role-select"
+                                value={rolSeleccionado}
+                                onChange={(e) => setRolSeleccionado(e.target.value)}
+                                className="block appearance-none w-full has-background-text-00 border border-red-700 text-white py-3 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-red-700 focus:border-red-500 transition duration-300"
+                            >
+                                <option value="">Todos los roles</option>
+                                {roles.map(rol => (
+                                    <option key={rol} value={rol}>{rol}</option>
+                                ))}
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-blue-200">
+                                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex-grow-0"> {/* Esto mantendrá el Buscador a la derecha */}
+                        <Buscador buscador={buscador} handleChange={handleBuscadorChange} />
                     </div>
                 </div>
-            )}
-</div>
+                {showWarning && (
+                    <div className="fixed right-4 bottom-10 w-72 notification is-warning bg-red-500 border border-black  rounded-lg overflow-hidden h-48 transition-all  ease-in-out z-50">
+                        <button className="delete absolute top-2 right-2" onClick={closeWarning}></button>
+                        <div className="p-1">
+                            <p className="font-bold mb-2">Límite alcanzado</p>
+                            <p className="text-xl">Has seleccionado 5 agentes. No puedes añadir más a tu equipo.</p>
+                        </div>
+                    </div>
+                )}
+            </div>
             <div className="mb-4 flex justify-between items-center">
                 <button
                     onClick={() => setModalOpen(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded transition duration-300"
+                    className="bg-gray-800 border-2 border-red-600 text-white font-bold py-2 px-4 rounded w-48 transition duration-300 ease-in-out hover:bg-red-600 hover:text-white"
                 >
-                   Team {agentesSeleccionados.length}/5
+                    Team {agentesSeleccionados.length}/5
                 </button>
             </div>
             <div>
-                <h1></h1>
+            <Pagination paginacion={paginacion} 
+            currentPage={currentPage} 
+            setCurrentPage={setCurrentPage}
+            total={agents.length}
+            />
             </div>
             {loading ? (
                 <div className="flex justify-center items-center">
                     <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {agentesFiltrados.length === 0 && (
-                        <div className="mb-6 text-black text-center ">
-                            No se encontraron agentes que coincidan con la búsqueda
-                        </div>
-                    )}
-                    {agentesFiltrados.map((agent) => (
-                        <div key={agent.uuid} className="bg-gradient-to-br from-gray-900 to-blue-950 rounded-xl shadow-lg">
-                            <div className="relative">
-                                <img src={agent.fullPortrait || agent.displayIcon} alt={agent.displayName} className="w-full h-100 overflow-hidden transform transition duration-300 hover:scale-125 " />
-                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-500 to-transparent p-4">
-                                    <h3 className="text-xl font-bold text-white">{agent.displayName}</h3>
-                                    <p className="text-blue-200">{agent.role?.displayName}</p>
-                                </div>
-                            </div>
-                            <div className="p-4">
-                                <p className="text-sm text-blue-200 mb-4 h-20 overflow-y-auto">{agent.description}</p>
-                                <button
-                                    onClick={() => toggleAgenteSeleccionado(agent)}
-                                    disabled={agentesSeleccionados.length >= 5 && !isAgenteSeleccionado(agent)}
-                                    className={` w-full font-bold py-2 px-4 rounded transition duration-300 transform hover:scale-105 ${
-                                        isAgenteSeleccionado(agent)
-                                            ? 'bg-red-600 hover:bg-red-700 text-white'
-                                            : agentesSeleccionados.length >= 5
-                                            ? 'button is-warning is-light'
-                                            : 'bg-blue-600 hover:bg-blue-700 text-white'
-                                    }`}
-                                >
-                                    {isAgenteSeleccionado(agent) ? 'Quitar' : 'Agregar'}
-                                </button>
-                            </div>
-                        </div>
-                    )).slice(firtIndex, lastIndex)}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative">
+    {agentesFiltrados.length === 0 ? (
+        <div className="col-span-full flex justify-center items-center h-40">
+            <p className="text-xl text-white text-center">
+                No se encontraron agentes que coincidan con la búsqueda
+            </p>
+        </div>
+    ) : (
+        agentesFiltrados.slice(firtIndex, lastIndex).map((agent) => (
+            <div key={agent.uuid} className="bg-gradient-to-br from-gray-900 to-blue-950 rounded-xl shadow-lg">
+                <div className="relative">
+                    <img src={agent.fullPortrait || agent.displayIcon} alt={agent.displayName} className="w-full h-100 overflow-hidden transform transition duration-300 hover:scale-125 " />
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-500 to-transparent p-4">
+                        <h3 className="text-xl font-bold text-white">{agent.displayName}</h3>
+                        <p className="text-blue-200">{agent.role?.displayName}</p>
+                    </div>
                 </div>
+                <div className="p-4">
+                    <p className="text-sm text-blue-200 mb-4 h-20 overflow-y-auto">{agent.description}</p>
+                    <button
+                        onClick={() => toggleAgenteSeleccionado(agent)}
+                        disabled={agentesSeleccionados.length >= 5 && !isAgenteSeleccionado(agent)}
+                        className={`w-full font-bold py-2 px-4 rounded transition duration-300 transform hover:scale-105 ${
+                            isAgenteSeleccionado(agent)
+                                ? 'bg-red-600 hover:bg-red-700 text-white'
+                                : agentesSeleccionados.length >= 5
+                                ? 'button is-warning is-light'
+                                : 'bg-blue-600 border-2 border-black hover:bg-blue-700 text-white'
+                        }`}
+                    >
+                        {isAgenteSeleccionado(agent) ? 'Quitar' : 'Agregar'}
+                    </button>
+                </div>
+            </div>
+        ))
+    )}
+</div>
             )}
-            <Pagination paginacion={paginacion} 
-            currentPage={currentPage} 
-            setCurrentPage={setCurrentPage}
-            total={agents.length}
+            <Pagination paginacion={paginacion}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                total={agents.length}
             />
             <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -195,12 +210,12 @@ function ApiValorant() {
                             <div>
                                 <h3 className="text-lg font-semibold text-white">{agent.displayName}</h3>
                                 <p className="text-blue-200">{agent.role?.displayName}</p>+
-                                <button 
-                                onClick={() => toggleAgenteSeleccionado(agent)}
-                                className= "bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition duration-300"
-                            >
-                                Close
-                            </button>
+                                <button
+                                    onClick={() => toggleAgenteSeleccionado(agent)}
+                                    className="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition duration-300"
+                                >
+                                    Close
+                                </button>
                             </div>
                         </div>
                     ))}
